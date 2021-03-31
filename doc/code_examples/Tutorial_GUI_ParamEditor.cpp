@@ -57,6 +57,7 @@ Int main(int argc, const char** argv)
   app.exec();
 
   editor->store();
+  delete editor;
   paramFile.store("Tutorial_ParamEditor_out.ini", param);
 
   return 0;
