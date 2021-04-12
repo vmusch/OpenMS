@@ -50,14 +50,13 @@ Int main(int argc, const char** argv)
 
   paramFile.load(tutorial_data_path + "/data/Tutorial_ParamEditor.ini", param);
 
-  ParamEditor* editor = new ParamEditor(nullptr);
-  editor->load(param);
-  editor->show();
+  ParamEditor editor(nullptr);
+  editor.load(param);
+  editor.show();
 
   app.exec();
 
-  editor->store();
-  delete editor;
+  editor.store();
   paramFile.store("Tutorial_ParamEditor_out.ini", param);
 
   return 0;
