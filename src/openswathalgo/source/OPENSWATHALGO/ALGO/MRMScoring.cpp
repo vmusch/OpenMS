@@ -804,19 +804,23 @@ namespace OpenSwath
       features.push_back(fj);
     }
 
+    std::vector<unsigned int> rank_vector1, rank_vector2;
+
     mi_precursor_combined_matrix_.resize(features.size(), features.size());
     for (std::size_t i = 0; i < features.size(); i++)
     { 
       FeatureType fi = features[i];
       intensityi.clear();
       fi->getIntensity(intensityi);
+      Scoring::computeRank_inplace(intensityi, rank_vector1);
       for (std::size_t j = 0; j < features.size(); j++)
       {
         FeatureType fj = features[j];
         intensityj.clear();
         fj->getIntensity(intensityj);
+        Scoring::computeRank_inplace(intensityj, rank_vector2);
         // compute ranked mutual information
-        mi_precursor_combined_matrix_.setValue(i ,j, Scoring::rankedMutualInformation(intensityi, intensityj));
+        mi_precursor_combined_matrix_.setValue(i ,j, Scoring::preCalcRankedMutualInformation(rank_vector1, rank_vector2));
       }
     }
   }
