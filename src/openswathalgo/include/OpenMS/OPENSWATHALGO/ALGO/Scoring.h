@@ -39,8 +39,6 @@
 #include <vector>
 
 #include <OpenMS/OPENSWATHALGO/OpenSwathAlgoConfig.h>
-#include <boost/lambda/casts.hpp>
-#include <boost/lambda/lambda.hpp>
 
 namespace OpenSwath
 {
@@ -117,11 +115,11 @@ public:
     /// Calculate crosscorrelation on std::vector data (which is first normalized)
     /// NOTE: this replaces calcxcorr 
     OPENSWATHALGO_DLLAPI XCorrArrayType normalizedCrossCorrelation(std::vector<double>& data1,
-                                                                   std::vector<double>& data2, const int& maxdelay, const int& lag);
+                                                                   std::vector<double>& data2, const int maxdelay, const int lag);
 
     /// Calculate crosscorrelation on std::vector data without normalization
     OPENSWATHALGO_DLLAPI XCorrArrayType calculateCrossCorrelation(const std::vector<double>& data1,
-                                                                  const std::vector<double>& data2, const int& maxdelay, const int& lag);
+                                                                  const std::vector<double>& data2, const int maxdelay, const int lag);
 
     /// Find best peak in an cross-correlation (highest apex)
     OPENSWATHALGO_DLLAPI XCorrArrayType::const_iterator xcorrArrayGetMaxPeak(const XCorrArrayType & array);
@@ -133,10 +131,13 @@ public:
     OPENSWATHALGO_DLLAPI void normalize_sum(double x[], unsigned int n);
 
     // Compute rank of vector elements
-    OPENSWATHALGO_DLLAPI std::vector<unsigned int> computeRank(const std::vector<double>& w);
+    OPENSWATHALGO_DLLAPI void computeRank(const std::vector<double>& v_temp, std::vector<unsigned int>& result);
 
     // Estimate rank-transformed mutual information between two vectors of data points
     OPENSWATHALGO_DLLAPI double rankedMutualInformation(std::vector<double>& data1, std::vector<double>& data2);
+
+    // Estimate rank-transformed mutual information between two vectors of rank
+    OPENSWATHALGO_DLLAPI double preCalcRankedMutualInformation(std::vector<unsigned int>& rank_vector1, std::vector<unsigned int>& rank_vector2);
 
     //@}
 
