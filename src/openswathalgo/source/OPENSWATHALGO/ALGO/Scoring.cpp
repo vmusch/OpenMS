@@ -32,6 +32,7 @@
 // $Authors: Hannes Roest $
 // --------------------------------------------------------------------------
 
+#include <iostream>
 #include <OpenMS/OPENSWATHALGO/ALGO/Scoring.h>
 #include <OpenMS/OPENSWATHALGO/Macros.h>
 #include <cmath>
@@ -170,9 +171,10 @@ namespace OpenSwath::Scoring
       standardize_data(data2);
       XCorrArrayType result = calculateCrossCorrelation(data1, data2, maxdelay, lag);
 
-      for (XCorrArrayType::iterator it = result.begin(); it != result.end(); ++it)
+      double d = 1.0 / data1.size();
+      for(auto& e : result)
       {
-        it->second /= data1.size();
+        e.second *= d;
       }
       return result;
     }
