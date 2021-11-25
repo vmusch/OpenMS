@@ -70,6 +70,17 @@ public:
     iterator end() {return data.end();}
     const_iterator end() const {return data.end();}
     };
+
+    struct jpstate
+    {
+        std::vector<double> jointProbabilityVector;
+        int numJointStates;
+        std::vector<double> firstProbabilityVector;
+        int numFirstStates;
+        std::vector<double> secondProbabilityVector;
+        int numSecondStates;
+        std::vector<unsigned int> jointPositionVector;
+    };
     //@}
 
     /** @name Helper functions */
@@ -137,6 +148,8 @@ public:
     // Estimate rank-transformed mutual information between two vectors of data points
     //OPENSWATHALGO_DLLAPI double rankedMutualInformation(std::vector<double>& data1, std::vector<double>& data2);
     OPENSWATHALGO_DLLAPI double rankedMutualInformation(std::vector<unsigned int>& data1, std::vector<unsigned int>& data2);
+
+    OPENSWATHALGO_DLLAPI unsigned int maxElem(const std::vector<unsigned int>& arr);
 
     //@}
 

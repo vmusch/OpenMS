@@ -56,7 +56,7 @@ namespace OpenSwath::Scoring
         return;
       }                           
       auto inverse_sum = 1 / sumx; // precompute inverse since division is expensive!
-      for (int i = 0; i < n; ++i)
+      for (unsigned int i = 0; i < n; ++i)
       {
         x[i] *= inverse_sum;
       }
@@ -295,14 +295,99 @@ namespace OpenSwath::Scoring
       }
     }
 
+    unsigned int maxElem(const std::vector<unsigned int>& arr)
+    {
+      unsigned int max = arr[0];
+      for(auto e : arr)
+      {
+        if(e > max) max = e;
+      }
+      return max+1;
+    }
+
+
+
+    jpstate calcJointProbability(const std::vector<uint>& firstVector,const std::vector<uint>& secondVector,const int& vectorLength)
+    {
+      jpstate state;
+      double length = 1.0 / vectorLength;
+      unsigned int firstNumStates = maxElem(firstVector);
+      unsigned int secondNumStates = maxElem(secondVector);
+      unsigned int jointNumStates = firstNumStates * secondNumStates;
+
+      std::vector<unsigned int> firstStateCounts(firstNumStates, 0);
+      std::vector<unsigned int> secondStateCounts(secondNumStates, 0);
+      std::vector<unsigned int> jointStateCounts(jointNumStates, 0);
+      std::vector<unsigned int> jointPosition(firstNumStates, 0);
+
+      std::vector<double> firstStateProbs(firstNumStates, 0.0);
+      std::vector<double> secondStateProbs(secondNumStates, 0.0);
+      std::vector<double> jointStateProbs(jointNumStates, 0.0);
+
+      for(int i = 0; i < vectorLength; i++)
+      {
+        firstStateCounts[firstVector[i]] += 1;
+        secondStateCounts[secondVector[i]] += 1;
+        jointPosition[i] = secondVector[i] * firstNumStates + firstVector[i];
+        jointStateCounts[jointPosition[i]] += 1;
+      }
+
+      for (unsigned int i = 0; i < firstNumStates; i++) {
+        firstStateProbs[i] = firstStateCounts[i] * length;
+      }
+
+      for (unsigned int i = 0; i < secondNumStates; i++) {
+        secondStateProbs[i] = secondStateCounts[i] * length;
+      }
+
+      for (unsigned int i = 0; i < jointNumStates; i++) {
+        jointStateProbs[i] = jointStateCounts[i] * length;
+      }
+
+      state.jointPositionVector = jointPosition;
+      state.jointProbabilityVector = jointStateProbs;
+      state.numJointStates = jointNumStates;
+      state.firstProbabilityVector = firstStateProbs;
+      state.numFirstStates = firstNumStates;
+      state.secondProbabilityVector = secondStateProbs;
+      state.numSecondStates = secondNumStates;
+
+      return state;
+    }
+
+    double mutualInformation(jpstate& state,const std::vector<uint>& firstVector,const std::vector<uint>& secondVector)
+    {
+      double mutualInformation = 0.0;
+      //int firstIndex,secondIndex;
+
+      /*
+      ** I(X;Y) = \sum_x \sum_y p(x,y) * \log (p(x,y)/p(x)p(y))
+      */
+      for (unsigned int i = 0; i < firstVector.size(); i++)
+      {
+
+        int j = state.jointPositionVector[i];
+        if(state.jointProbabilityVector[j] != 0)
+        {
+          /*double division is probably more stable than multiplying two small numbers together
+          ** mutualInformation += state.jointProbabilityVector[i] * log(state.jointProbabilityVector[i] / (state.firstProbabilityVector[firstIndex] * state.secondProbabilityVector[secondIndex]));
+          */
+          mutualInformation += state.jointProbabilityVector[j] *
+                               log2(state.jointProbabilityVector[j] / state.firstProbabilityVector[firstVector[i]] /
+                                    state.secondProbabilityVector[secondVector[i]]);
+          state.jointProbabilityVector[j] = 0;
+        }
+      }
+      return mutualInformation;
+    }
+
     double rankedMutualInformation(std::vector<unsigned int>& data1, std::vector<unsigned int>& data2)
     {
       OPENSWATH_PRECONDITION(data1.size() != 0 && data1.size() == data2.size(), "Both data vectors need to have the same length");
 
-      unsigned int* arr_int_data1 = &data1[0];
-      unsigned int* arr_int_data2 = &data2[0];
+      jpstate state = calcJointProbability(data1, data2, data1.size());
 
-      double result = calcMutualInformation(arr_int_data1, arr_int_data2, data1.size());
+      double result = mutualInformation(state, data1, data2);
 
       return result;
     }
