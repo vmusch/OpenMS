@@ -307,7 +307,7 @@ namespace OpenSwath::Scoring
 
 
 
-    jpstate calcJointProbability(const std::vector<uint>& firstVector,const std::vector<uint>& secondVector,const int& vectorLength)
+    jpstate calcJointProbability(const std::vector<unsigned int>& firstVector,const std::vector<unsigned int>& secondVector,const int& vectorLength)
     {
       jpstate state;
       double length = 1.0 / vectorLength;
@@ -355,7 +355,7 @@ namespace OpenSwath::Scoring
       return state;
     }
 
-    double mutualInformation(jpstate& state,const std::vector<uint>& firstVector,const std::vector<uint>& secondVector)
+    double mutualInformation(jpstate& state,const std::vector<unsigned int>& firstVector,const std::vector<unsigned int>& secondVector)
     {
       double mutualInformation = 0.0;
       //int firstIndex,secondIndex;
@@ -388,7 +388,11 @@ namespace OpenSwath::Scoring
       jpstate state = calcJointProbability(data1, data2, data1.size());
 
       double result = mutualInformation(state, data1, data2);
-
+      /*
+      unsigned int* arr_int_data1 = &data1[0];
+      unsigned int* arr_int_data2 = &data2[0];
+      double result = calcMutualInformation(arr_int_data1, arr_int_data2, data1.size());
+      */
       return result;
     }
 }      //namespace OpenMS  // namespace Scoring

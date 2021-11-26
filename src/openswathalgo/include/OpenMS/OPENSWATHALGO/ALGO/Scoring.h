@@ -150,6 +150,8 @@ public:
     OPENSWATHALGO_DLLAPI double rankedMutualInformation(std::vector<unsigned int>& data1, std::vector<unsigned int>& data2);
 
     OPENSWATHALGO_DLLAPI unsigned int maxElem(const std::vector<unsigned int>& arr);
+    OPENSWATHALGO_DLLAPI jpstate calcJointProbability(const std::vector<unsigned int>& firstVector,const std::vector<unsigned int>& secondVector,const int& vectorLength);
+    OPENSWATHALGO_DLLAPI double mutualInformation(jpstate& state,const std::vector<unsigned int>& firstVector,const std::vector<unsigned int>& secondVector);
 
     //@}
 
