@@ -281,6 +281,7 @@ namespace OpenSwath::Scoring
       std::iota(ranks.begin(), ranks.end(), 0);
       std::sort(ranks.begin(), ranks.end(),
                 [&v_temp](unsigned int i, unsigned int j) { return v_temp[i] < v_temp[j]; });
+      ranks_out.clear();
       ranks_out.resize(v_temp.size());
       double x = 0;
       unsigned int y = 0;
